@@ -17,7 +17,17 @@ Paste in a ALM article URL to a page or post, and it will display the citation w
 
 1. Upload the plugin to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Paste a PLOS article URL into a page or post.
+3. Paste a URL into a page or post with the following format: `http://alm.plos.org/oembed?url=http://dx.doi.org/10.1371/journal.pone.0036790,
+   where the DOI must be known to the ALM server (`alm.plos.org` in this case).
+
+The following ALM servers are supported:
+
+* http://alm.plos.org
+* http://metricus.copernicus.org
+* http://pkp-alm.lib.sfu.ca/
+* http://labs.crowdometer.org
+* http://alm.labs.crossref.org
+* http://alm.svr.elifesciences.org/
 
 == Changelog ==
 

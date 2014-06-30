@@ -7,6 +7,8 @@
 	Author: Martin Fenner
 	Version: 1.0.3
 	Author URI: http://blog.martinfenner.org
+  GitHub Plugin URI: https://github.com/articlemetrics/alm-oembed-plugin
+  GitHub Branch: master
 
   Copyright 2013-2014 Public Library of Science
 
