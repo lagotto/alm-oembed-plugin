@@ -20,16 +20,17 @@ Paste in a ALM article URL to a page or post, and it will display the citation w
 3. Paste a URL into a page or post with the following format: `http://alm.plos.org/oembed?url=http://dx.doi.org/10.1371/journal.pone.0036790,
    where the DOI must be known to the ALM server (`alm.plos.org` in this case).
 
-The following ALM servers are supported:
+To change the ALM server that is whitelisted, change the configuration in Settings -> ALM oEmbed. The default is:
 
-* http://alm.plos.org
-* http://metricus.copernicus.org
-* http://pkp-alm.lib.sfu.ca/
-* http://labs.crowdometer.org
-* http://alm.labs.crossref.org
-* http://alm.svr.elifesciences.org/
+Format: http://alm.plos.org/articles/*
+
+Provider: http://alm.plos.org/oembed
 
 == Changelog ==
+
+= 1.1 =
+
+Added admin menu for custom oEmbed provider.
 
 = 1.0.3 =
 
