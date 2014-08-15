@@ -3,9 +3,9 @@
 /*
   Plugin Name: ALM oEmbed
   Plugin URI: https://github.com/articlemetrics/alm-oembed-plugin
-  Description: Whitelist oEmbed provider
+  Description: Whitelist oEmbed providers
   Author: Martin Fenner
-  Version: 1.1.1
+  Version: 1.1.2
   GitHub Plugin URI: https://github.com/articlemetrics/alm-oembed-plugin
   GitHub Branch: master
 
@@ -28,22 +28,14 @@
   This plugin whitelists oEmbed providers and comes with a list of providers.
 */
 
-// Add settings link to plugins screen
-add_filter('plugin_action_links', 'oembed_action_links', 10, 2);
+// Register custom oembed provider --
+add_action('init', 'add_oembed_provider');
 
-function oembed_action_links($links, $file) {
-    static $this_plugin;
+function add_oembed_provider() {
+  $format = get_option('oembed_format', 'http://alm.plos.org/articles/*');
+  $provider = get_option('oembed_provider', 'http://alm.plos.org/oembed');
 
-    if (!$this_plugin) {
-        $this_plugin = plugin_basename(__FILE__);
-    }
-
-    if ($file == $this_plugin) {
-        $settings_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/options-general.php?page=oembed_providers">Settings</a>';
-        array_unshift($links, $settings_link);
-    }
-
-    return $links;
+  wp_oembed_add_provider($format, $provider);
 }
 
 // Add admin menu --
@@ -60,7 +52,7 @@ function oembed_providers_register() {
 
   add_option('oembed_format', 'http://alm.plos.org/articles/*');
   add_option('oembed_provider', 'http://alm.plos.org/oembed');
-  add_option('oembed_example', 'http://alm.plos.org/articles/10.1371/journal.pone.0103437');
+  add_option('oembed_example', 'http://alm.plos.org/articles/info:doi/10.1371/journal.pone.0103437');
 }
 
 // Admin menu page details --
@@ -115,19 +107,14 @@ function oembed_providers_options() { ?>
   <?php
 }
 
-// Whitelist oembed providers
-add_action( 'init', 'add_oembed_providers' );
-
-function add_oembed_providers() {
-  $format = get_option('oembed_format', 'http://alm\.plos\.org/articles/*#i');
-  $provider = get_option('oembed_provider', 'http://alm.plos.org/oembed');
-
-  wp_oembed_add_provider($format, $provider, true);
-}
-
 function get_example() {
-  $example = get_option('oembed_example');
+  $format = get_option('oembed_format', 'http://alm.plos.org/articles/*');
+  $provider = get_option('oembed_provider', 'http://alm.plos.org/oembed');
+  $example = get_option('oembed_example', 'http://alm.plos.org/articles/info:doi/10.1371/journal.pone.0103437');
+
+  wp_oembed_add_provider($format, $provider);
   $htmlcode = wp_oembed_get($example);
+
   if ($htmlcode) {
     return array (
       "status" => "",
@@ -136,12 +123,29 @@ function get_example() {
     $response = wp_remote_get($example);
     $message = wp_remote_retrieve_response_message($response);
     $body = wp_remote_retrieve_body($response);
-    $json = json_decode($body);
 
     return array (
       "status" => "Error: " . ($message == "OK" ? "URL wrong format" : $message),
       "body" => esc_attr($body));
   }
+}
+
+// Add settings link to plugins screen
+add_filter('plugin_action_links', 'oembed_action_links', 10, 2);
+
+function oembed_action_links($links, $file) {
+    static $this_plugin;
+
+    if (!$this_plugin) {
+        $this_plugin = plugin_basename(__FILE__);
+    }
+
+    if ($file == $this_plugin) {
+        $settings_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/options-general.php?page=oembed_providers">Settings</a>';
+        array_unshift($links, $settings_link);
+    }
+
+    return $links;
 }
 
 ?>
