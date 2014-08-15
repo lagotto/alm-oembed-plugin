@@ -3,9 +3,9 @@
 /*
   Plugin Name: ALM oEmbed
   Plugin URI: https://github.com/articlemetrics/alm-oembed-plugin
-  Description: Whitelist oEmbed providers
+  Description: Whitelist oEmbed provider
   Author: Martin Fenner
-  Version: 1.1
+  Version: 1.1.1
   GitHub Plugin URI: https://github.com/articlemetrics/alm-oembed-plugin
   GitHub Branch: master
 
@@ -56,9 +56,11 @@ if (is_admin()) {
 function oembed_providers_register() {
   register_setting('oembed_providers_optiongroup', 'oembed_format');
   register_setting('oembed_providers_optiongroup', 'oembed_provider');
+  register_setting('oembed_providers_optiongroup', 'oembed_example');
 
   add_option('oembed_format', 'http://alm.plos.org/articles/*');
   add_option('oembed_provider', 'http://alm.plos.org/oembed');
+  add_option('oembed_example', 'http://alm.plos.org/articles/10.1371/journal.pone.0103437');
 }
 
 // Admin menu page details --
@@ -69,7 +71,6 @@ function oembed_providers_menu() {
 // Add actual menu page --
 function oembed_providers_options() { ?>
   <div class="wrap">
-    <div id="icon-options-general" class="icon32" ><br/></div>
     <h2>ALM oEmbed Settings</h2>
     <p>This is the settings page for the <a href="https://github.com/articlemetrics/alm-oembed-plugin">ALM oEmbed</a> plugin. This plugin whitelists an additional oEmbed service beyond those <a href="http://codex.wordpress.org/Embeds">included by default</a>.</p>
     <p>Whitelist the following oEmbed service:</p>
@@ -81,13 +82,28 @@ function oembed_providers_options() { ?>
       <tr valign="top">
         <th scope="row">Format</th>
         <td>
-          <input type="text" name="oembed_format" class="regular-text" value="<?php echo esc_attr( get_option('oembed_format') ); ?>" />
+          <input type="text" name="oembed_format" size="60" value="<?php echo esc_attr( get_option('oembed_format') ); ?>" />
         </td>
       </tr>
       <tr valign="top">
         <th scope="row">Provider</th>
         <td>
-          <input type="text" name="oembed_provider" class="regular-text" value="<?php echo esc_attr( get_option('oembed_provider') ); ?>" />
+          <input type="text" name="oembed_provider" size="60" value="<?php echo esc_attr( get_option('oembed_provider') ); ?>" />
+        </td>
+      </tr>
+      <tr valign="top">
+        <th scope="row">Example</th>
+        <td>
+          <input type="text" name="oembed_example" size="60" value="<?php echo esc_attr( get_option('oembed_example') ); ?>" />
+        </td>
+      </tr>
+      <tr valign="top">
+      <?php $response = get_example(); ?>
+        <th scope="row" style="color: red;"><?php echo $response['status']; ?></th>
+        <td>
+          <div style="color: red; width: 700px;">
+            <?php echo $response['body']; ?>
+          </div>
         </td>
       </tr>
     </table>
@@ -95,6 +111,7 @@ function oembed_providers_options() { ?>
     <?php submit_button(); ?>
     </form>
   </div>
+
   <?php
 }
 
@@ -102,10 +119,29 @@ function oembed_providers_options() { ?>
 add_action( 'init', 'add_oembed_providers' );
 
 function add_oembed_providers() {
-  $format = get_option('oembed_format', 'http://alm.plos.org/articles/*');
+  $format = get_option('oembed_format', 'http://alm\.plos\.org/articles/*#i');
   $provider = get_option('oembed_provider', 'http://alm.plos.org/oembed');
 
-  wp_oembed_add_provider($format, $provider);
+  wp_oembed_add_provider($format, $provider, true);
+}
+
+function get_example() {
+  $example = get_option('oembed_example');
+  $htmlcode = wp_oembed_get($example);
+  if ($htmlcode) {
+    return array (
+      "status" => "",
+      "body" => $htmlcode);
+  } else {
+    $response = wp_remote_get($example);
+    $message = wp_remote_retrieve_response_message($response);
+    $body = wp_remote_retrieve_body($response);
+    $json = json_decode($body);
+
+    return array (
+      "status" => "Error: " . ($message == "OK" ? "URL wrong format" : $message),
+      "body" => esc_attr($body));
+  }
 }
 
 ?>

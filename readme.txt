@@ -2,8 +2,8 @@
 Contributors: mfenner
 Tags: oembed, embed, alm, altmetrics, metrics, doi, plos, res-comms
 Requires at least: 3.2
-Tested up to: 3.9.1
-Stable tag: 1.0.3
+Tested up to: 3.9.2
+Stable tag: 1.1.1
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,6 +27,10 @@ Format: http://alm.plos.org/articles/*
 Provider: http://alm.plos.org/oembed
 
 == Changelog ==
+
+= 1.1.1 =
+
+Added example URL with preview.
 
 = 1.1 =
 
